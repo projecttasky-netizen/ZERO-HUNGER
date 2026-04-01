@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && (
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'admin') || 
+        request.auth.token.email == "spidereg2010@gmail.com"
+      );
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Registration Requests
+    match /registration_requests/{requestId} {
+      // Anyone can create a request
+      allow create: if true 
+        && request.resource.data.keys().hasAll(['username', 'email', 'userType', 'status', 'createdAt'])
+        && request.resource.data.status == 'pending'
+        && request.resource.data.username is string && request.resource.data.username.size() > 0
+        && request.resource.data.email is string && request.resource.data.email.size() > 0;
+      
+      // Only admins can read or update requests
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Users
+    match /users/{userId} {
+      // Users can read their own profile, admins can read all
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Users can create their own profile as pending
+      allow create: if isOwner(userId) 
+        && request.resource.data.isApproved == false
+        && request.resource.data.uid == userId;
+        
+      // Only admins can update user records (for approval)
+      // Or users can update their own username or location
+      allow update: if isAdmin() 
+        || (isOwner(userId) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['username', 'location']));
+      
+      allow delete: if isAdmin();
+    }
+    // Donations
+    match /donations/{donationId} {
+      // Authenticated users can read available donations
+      // Donors can read their own
+      // Admins can read all
+      allow read: if isAuthenticated() && (
+        resource.data.status == 'available' || 
+        resource.data.donorId == request.auth.uid ||
+        resource.data.recipientId == request.auth.uid ||
+        isAdmin()
+      );
+      
+      // Authenticated users can create donations
+      allow create: if isAuthenticated()
+        && request.resource.data.donorId == request.auth.uid
+        && request.resource.data.status == 'available'
+        && request.resource.data.food is string && request.resource.data.food.size() > 0
+        && (!('location' in request.resource.data) || (request.resource.data.location is map && request.resource.data.location.lat is number && request.resource.data.location.lng is number));
+        
+      // Donors can update their own available donations
+      // Recipients can request available donations
+      allow update: if isAuthenticated() && (
+        (resource.data.donorId == request.auth.uid && resource.data.status == 'available') ||
+        (resource.data.status == 'available' && request.resource.data.status == 'requested' && request.resource.data.recipientId == request.auth.uid) ||
+        isAdmin()
+      );
+      
+      allow delete: if isAdmin() || (isAuthenticated() && resource.data.donorId == request.auth.uid && resource.data.status == 'available');
+    }
+  }
+}

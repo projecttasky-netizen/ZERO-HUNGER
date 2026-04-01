@@ -1,0 +1,8 @@
+{
+  "name": "Zero Hunger PGL",
+  "description": "A platform to reduce food waste and eliminate hunger through AI-powered food rescue and community engagement.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}

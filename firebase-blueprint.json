@@ -1,0 +1,76 @@
+{
+  "entities": {
+    "RegistrationRequest": {
+      "title": "Registration Request",
+      "description": "A request from a user to register an account, pending admin approval.",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string", "description": "The requested username." },
+        "email": { "type": "string", "format": "email", "description": "The user's email address." },
+        "userType": { "type": "string", "enum": ["donor", "recipient"], "description": "The type of account requested." },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"], "description": "The current status of the request." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the request was made." }
+      },
+      "required": ["username", "email", "userType", "status", "createdAt"]
+    },
+    "User": {
+      "title": "User",
+      "description": "An approved user of the system.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The Firebase Auth UID." },
+        "username": { "type": "string", "description": "The user's display name." },
+        "email": { "type": "string", "format": "email", "description": "The user's email address." },
+        "userType": { "type": "string", "enum": ["donor", "recipient", "admin"], "description": "The role of the user." },
+        "isApproved": { "type": "boolean", "description": "Whether the user account is active." },
+        "location": {
+          "type": "object",
+          "properties": {
+            "lat": { "type": "number" },
+            "lng": { "type": "number" }
+          },
+          "description": "The user's last known location."
+        }
+      },
+      "required": ["uid", "username", "email", "userType", "isApproved"]
+    },
+    "Donation": {
+      "title": "Donation",
+      "description": "A food donation item.",
+      "type": "object",
+      "properties": {
+        "donorId": { "type": "string", "description": "UID of the donor." },
+        "food": { "type": "string", "description": "Name of the food item." },
+        "weight": { "type": "string", "description": "Weight or quantity of the food." },
+        "imageUrl": { "type": "string", "description": "URL of the food image." },
+        "status": { "type": "string", "enum": ["available", "requested", "completed"], "description": "Current status of the donation." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the donation was created." },
+        "requestedAt": { "type": "string", "format": "date-time", "description": "When the donation was requested." },
+        "recipientId": { "type": "string", "description": "UID of the recipient who requested the item." },
+        "location": {
+          "type": "object",
+          "properties": {
+            "lat": { "type": "number" },
+            "lng": { "type": "number" }
+          },
+          "description": "Location where the donation is available."
+        }
+      },
+      "required": ["donorId", "food", "weight", "imageUrl", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/registration_requests/{requestId}": {
+      "schema": "RegistrationRequest",
+      "description": "Collection of pending registration requests."
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Collection of registered and approved users."
+    },
+    "/donations/{donationId}": {
+      "schema": "Donation",
+      "description": "Collection of food donations."
+    }
+  }
+}
