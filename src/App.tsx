@@ -7,6 +7,7 @@ import LoginPage from './components/LoginPage';
 import AdminDashboard from './components/AdminDashboard';
 import DonorDashboard from './components/DonorDashboard';
 import RecipientDashboard from './components/RecipientDashboard';
+import DeliveryDashboard from './components/DeliveryDashboard';
 import { auth, db } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
@@ -40,6 +41,7 @@ const ProtectedRoute = ({ children, requiredRole }: { children: React.ReactNode,
     if (userProfile?.userType === 'admin') return <Navigate to="/admin" />;
     if (userProfile?.userType === 'donor') return <Navigate to="/donor" />;
     if (userProfile?.userType === 'recipient') return <Navigate to="/recipient" />;
+    if (userProfile?.userType === 'delivery') return <Navigate to="/delivery" />;
     return <Navigate to="/" />;
   }
 
@@ -80,6 +82,12 @@ export default function App() {
         <Route path="/recipient" element={
           <ProtectedRoute requiredRole="recipient">
             <RecipientDashboard />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/delivery" element={
+          <ProtectedRoute requiredRole="delivery">
+            <DeliveryDashboard />
           </ProtectedRoute>
         } />
       </Routes>

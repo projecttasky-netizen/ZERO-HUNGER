@@ -473,6 +473,7 @@ export default function LandingPage() {
     if (userProfile.userType === 'admin') return "/admin";
     if (userProfile.userType === 'donor') return "/donor";
     if (userProfile.userType === 'recipient') return "/recipient";
+    if (userProfile.userType === 'delivery') return "/delivery";
     return "/login";
   };
 

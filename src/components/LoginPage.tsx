@@ -10,7 +10,7 @@ import { signInWithEmailAndPassword, signInWithPopup, createUserWithEmailAndPass
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
-  const [userType, setUserType] = useState<'donor' | 'recipient'>('donor');
+  const [userType, setUserType] = useState<'donor' | 'recipient' | 'delivery'>('donor');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
   const navigate = useNavigate();
@@ -20,6 +20,7 @@ export default function LoginPage() {
       if (userType === 'admin') navigate('/admin');
       else if (userType === 'donor') navigate('/donor');
       else if (userType === 'recipient') navigate('/recipient');
+      else if (userType === 'delivery') navigate('/delivery');
       else navigate('/');
     };
 
@@ -257,11 +258,11 @@ export default function LoginPage() {
             <>
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700">Τύπος χρήστη</label>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <button
                     type="button"
                     onClick={() => setUserType('donor')}
-                    className={`py-3 rounded-2xl font-bold border-2 transition-all ${
+                    className={`py-3 rounded-2xl font-bold border-2 transition-all text-xs ${
                       userType === 'donor'
                         ? 'border-brand bg-brand/5 text-brand'
                         : 'border-slate-100 text-slate-400 hover:border-slate-200'
@@ -272,13 +273,24 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setUserType('recipient')}
-                    className={`py-3 rounded-2xl font-bold border-2 transition-all ${
+                    className={`py-3 rounded-2xl font-bold border-2 transition-all text-xs ${
                       userType === 'recipient'
                         ? 'border-brand-green bg-brand-green/5 text-brand-green'
                         : 'border-slate-100 text-slate-400 hover:border-slate-200'
                     }`}
                   >
                     Παραλήπτης
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setUserType('delivery')}
+                    className={`py-3 rounded-2xl font-bold border-2 transition-all text-xs ${
+                      userType === 'delivery'
+                        ? 'border-blue-500 bg-blue-50 text-blue-500'
+                        : 'border-slate-100 text-slate-400 hover:border-slate-200'
+                    }`}
+                  >
+                    Delivery
                   </button>
                 </div>
               </div>

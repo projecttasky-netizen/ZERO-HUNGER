@@ -10,7 +10,7 @@ interface RegistrationRequest {
   id: string;
   username: string;
   email: string;
-  userType: 'donor' | 'recipient';
+  userType: 'donor' | 'recipient' | 'delivery';
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string;
 }
