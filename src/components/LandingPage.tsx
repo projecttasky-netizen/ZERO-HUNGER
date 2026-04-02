@@ -264,9 +264,9 @@ const COOK_SMART_CONTENT = `
 `;
 
 const FOODLINK_CY_CONTENT = `
-## 📱 FoodLink CY – Αναλυτική Περιγραφή
+## 📱 ZERO HUNGER PGL – Αναλυτική Περιγραφή
 
-Το **FoodLink CY** είναι μια ψηφιακή εφαρμογή που συνδέει σε πραγματικό χρόνο επιχειρήσεις ή άτομα που διαθέτουν πλεονάζοντα τρόφιμα (δωρητές) με κοινωνικούς φορείς που τα χρειάζονται.
+Το **ZERO HUNGER PGL** είναι μια ψηφιακή εφαρμογή που συνδέει σε πραγματικό χρόνο επιχειρήσεις ή άτομα που διαθέτουν πλεονάζοντα τρόφιμα (δωρητές) με κοινωνικούς φορείς που τα χρειάζονται.
 
 Στόχος είναι η **άμεση αξιοποίηση διαθέσιμων τροφίμων**, μειώνοντας τη σπατάλη και ενισχύοντας την κοινωνική υποστήριξη.
 
@@ -383,7 +383,7 @@ const FOODLINK_CY_CONTENT = `
 * **Cook Smart**
   → για εκπαίδευση στη σωστή χρήση τροφίμων
 
-👉 Το FoodLink CY λειτουργεί ως ο “ψηφιακός κόμβος” που τα ενώνει όλα.
+👉 Το ZERO HUNGER PGL λειτουργεί ως ο “ψηφιακός κόμβος” που τα ενώνει όλα.
 
 ---
 
@@ -790,7 +790,7 @@ export default function LandingPage() {
                   content: COOK_SMART_CONTENT
                 },
                 { 
-                  title: "FoodLink CY", 
+                  title: "ZERO HUNGER PGL", 
                   tag: "Platform",
                   color: "from-emerald-500 to-teal-500",
                   icon: <Smartphone className="w-6 h-6" />, 
@@ -925,7 +925,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-extrabold mb-3">Έχετε περισσότερες ερωτήσεις;</h3>
               <p className="text-slate-600 mb-8 max-w-md mx-auto">
-                Ο AI βοηθός μας είναι διαθέσιμος 24/7 για να σας λύσει κάθε απορία σχετικά με το FoodLink CY.
+                Ο AI βοηθός μας είναι διαθέσιμος 24/7 για να σας λύσει κάθε απορία σχετικά με το ZERO HUNGER PGL.
               </p>
               <Link 
                 to="/chat" 
