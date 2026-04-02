@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db, auth, handleFirestoreError, OperationType } from '../firebase';
 import { collection, query, where, onSnapshot, addDoc, doc, getDoc } from 'firebase/firestore';
 import { Package, Plus, History, LogOut, Utensils, Wheat } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Logo } from './LandingPage';
 import { GoogleGenAI } from "@google/genai";
 import axios from 'axios';
@@ -11,6 +11,7 @@ export default function DonorDashboard() {
   const [donations, setDonations] = useState<any[]>([]);
   const [isScanning, setIsScanning] = useState(false);
   const [prediction, setPrediction] = useState<string | null>(null);
+  const [lastImageUrl, setLastImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!auth.currentUser) return;
@@ -70,17 +71,21 @@ export default function DonorDashboard() {
       const userDoc = await getDoc(doc(db, 'users', auth.currentUser?.uid || ""));
       const donorLocation = userDoc.exists() ? userDoc.data().location : null;
 
+      const foodName = aiResult.food || "Άγνωστο τρόφιμο";
+      const foodWeight = aiResult.weight || "Άγνωστο βάρος";
+
       await addDoc(collection(db, 'donations'), {
-        donorId: auth.currentUser?.uid,
-        food: aiResult.food,
-        weight: aiResult.weight,
-        imageUrl: uploadRes.data.imageUrl,
+        donorId: auth.currentUser?.uid || "unknown",
+        food: foodName,
+        weight: foodWeight,
+        imageUrl: uploadRes.data.imageUrl || "",
         status: 'available',
         createdAt: new Date().toISOString(),
-        location: donorLocation
+        location: donorLocation || null
       });
 
-      setPrediction(`Επιτυχής καταχώρηση: ${aiResult.food} (${aiResult.weight})`);
+      setPrediction(`Επιτυχής καταχώρηση: ${foodName} (${foodWeight})`);
+      setLastImageUrl(uploadRes.data.imageUrl || "");
       form.reset();
     } catch (err) {
       console.error(err);
@@ -121,7 +126,30 @@ export default function DonorDashboard() {
               <button disabled={isScanning} className="w-full py-4 bg-brand text-white font-bold rounded-full shadow-lg hover:opacity-90 transition-opacity disabled:opacity-50">
                 {isScanning ? "Επεξεργασία..." : "Καταχώρηση με AI"}
               </button>
-              {prediction && <p className="text-center text-brand font-bold">{prediction}</p>}
+              
+              <AnimatePresence>
+                {prediction && (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="mt-6 p-6 bg-brand-green/5 border border-brand-green/20 rounded-3xl text-center"
+                  >
+                    <div className="w-12 h-12 bg-brand-green text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-green/20">
+                      <Package className="w-6 h-6" />
+                    </div>
+                    <h4 className="text-brand-green font-extrabold text-lg mb-1">Η εικόνα κατοχυρώθηκε!</h4>
+                    <p className="text-slate-600 text-sm mb-4">{prediction}</p>
+                    {lastImageUrl && (
+                      <img 
+                        src={lastImageUrl} 
+                        alt="Last donation" 
+                        className="w-full h-40 object-cover rounded-2xl border border-white shadow-sm"
+                        referrerPolicy="no-referrer"
+                      />
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </form>
           </div>
         </section>
